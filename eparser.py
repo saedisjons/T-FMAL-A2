@@ -2,7 +2,7 @@ from etoken import EToken
 from elexer import ELexer
 class EParser:
     def __init__(self, lexer):
-        print("Inside EParser")
+        #print("Inside EParser")
         self.lexer = lexer
         self.curr_token = None
         self.next_token()
@@ -11,39 +11,38 @@ class EParser:
         self.curr_token = self.lexer.get_next_token()
 
     def error(self):
-        print("error")
+        #print("error")
         raise Exception("Syntax error")
     
     def match(self, expected_token_code):
-        print(f"matching {expected_token_code}")
+        #print(f"matching {expected_token_code}")
         if self.curr_token.token_code == expected_token_code:
             self.next_token()
         else:
             self.error()
 
     def parse(self):
-        print("parse")
+        #print("parse")
         self.statements()
         if self.curr_token.token_code != EToken.END:
-            print(f"Expected END, got {self.curr_token.token_code}")
-            self.error()
+            self.parse()
 
     def statements(self):
-        print("statements")
+        #print("statements")
         if self.curr_token.token_code in [EToken.ID, EToken.PRINT]:
             self.statement()
             self.next_token()
             if self.curr_token.token_code == EToken.SEMICOL:
-                print("Expected SEMICOL")
+                #print("Expected SEMICOL")
                 self.next_token()
-                print("curr token is", self.curr_token.token_code)
+                #print("curr token is", self.curr_token.token_code)
                 self.statements()
         elif self.curr_token.token_code != EToken.END:
-            print(f"Expected ID or PRINT, got {self.curr_token.token_code}")
+            #print(f"Expected ID or PRINT, got {self.curr_token.token_code}")
             self.error()
 
     def statement(self):
-        print("statement")
+        #print("statement")
         if self.curr_token.token_code == EToken.ID:
             self.assign()
         elif self.curr_token.token_code == EToken.PRINT:
@@ -53,17 +52,15 @@ class EParser:
             self.error()
 
     def assign(self):
-        print("assign")
-        var_name = self.curr_token.lexeme  # Geyma breytuheitið
-        self.match(EToken.ID)  # Staðfesta að núverandi tóki sé breytuheiti
-        self.match(EToken.ASSIGN)  # Staðfesta að næsti tóki sé úthlutunaroperator
-        self.expr()  # Þátta segðina til hægri við úthlutunaroperatorinn
-        print(f"PUSH {var_name}")  # Útskrift fyrir að ýta breytuheiti á staflið
-        print(f"PUSH {self.curr_token.lexeme}")
-        print("ASSIGN")  # Skrifa út ASSIGN skipun
+        var_name = self.curr_token.lexeme
+        self.match(EToken.ID)
+        self.match(EToken.ASSIGN)
+        self.expr()
+        print(f"PUSH {var_name}")
+        print("ASSIGN")
 
     def print_statement(self):
-        print("print_statement")
+        #print("print_statement")
         self.match(EToken.PRINT)  # Staðfesta að um prentun sé að ræða
         var_name = self.curr_token.lexeme
         self.match(EToken.ID)  # Staðfesta að eftir prentun komi breytuheiti
@@ -71,7 +68,7 @@ class EParser:
         print("PRINT")  # Skrifa út PRINT skipun
 
     def expr(self):
-        print("expr")
+        #print("expr")
         self.term()
         while self.curr_token.token_code in [EToken.PLUS, EToken.MINUS]:
             if self.curr_token.token_code == EToken.PLUS:
@@ -84,20 +81,22 @@ class EParser:
                 print("SUB")  # Skrifa út SUB skipun
 
     def term(self):
-        print("term")
         self.factor()
-        while self.curr_token.token_code == EToken.MULT:
-            self.match(EToken.MULT)
+        while self.curr_token.token_code in [EToken.MULT]:  # Assuming DIV for division
+            op = self.curr_token.token_code
+            self.next_token()
             self.factor()
-            print("MULT")  # Skrifa út MULT skipun
+            if op == EToken.MULT:
+                print("MULT")
 
     def factor(self):
-        print("factor")
         if self.curr_token.token_code == EToken.INT:
-            return
+            print(f"PUSH {self.curr_token.lexeme}")
+            self.next_token()
         elif self.curr_token.token_code == EToken.ID:
-            self.match(EToken.ID)
+            print(f"PUSH {self.curr_token.lexeme}")
+            self.next_token()
         elif self.curr_token.token_code == EToken.LPAREN:
-            self.match(EToken.LPAREN)
+            self.next_token()
             self.expr()
             self.match(EToken.RPAREN)

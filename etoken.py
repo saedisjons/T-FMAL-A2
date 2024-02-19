@@ -19,7 +19,7 @@ class EToken:
     #ID, ASSIGN, SEMICOL, INT, PLUS, MINUS, MULT, LPAREN, RPAREN, PRINT, END, ERROR = range(12)
 
     def __init__(self, lexeme, token_code):
-        print("Inside EToken")
+        #print("Inside EToken")
         self.lexeme = lexeme  # Lesið (lexeme) sem strengur
         self.token_code = token_code  # Tókakóði sem integer
 
