@@ -15,7 +15,7 @@ class EParser:
         raise Exception("Syntax error")
     
     def match(self, expected_token_code):
-        #print(f"matching {expected_token_code}")
+        print(f"matching {expected_token_code} with curr token {self.curr_token.token_code}")
         if self.curr_token.token_code == expected_token_code:
             self.next_token()
         else:
@@ -26,19 +26,21 @@ class EParser:
         self.statements()
         if self.curr_token.token_code != EToken.END:
             self.parse()
+        else:
+            print()
 
     def statements(self):
-        #print("statements")
+        print("statements")
         if self.curr_token.token_code in [EToken.ID, EToken.PRINT]:
             self.statement()
             self.next_token()
             if self.curr_token.token_code == EToken.SEMICOL:
-                #print("Expected SEMICOL")
+                print("SEMICOL")
                 self.next_token()
-                #print("curr token is", self.curr_token.token_code)
+                print("curr token is", self.curr_token.token_code)
                 self.statements()
-        elif self.curr_token.token_code != EToken.END:
-            #print(f"Expected ID or PRINT, got {self.curr_token.token_code}")
+        elif self.curr_token.token_code == EToken.END:
+            print(f"Expected ID or PRINT, got {self.curr_token.token_code}")
             self.error()
 
     def statement(self):
@@ -46,7 +48,6 @@ class EParser:
         if self.curr_token.token_code == EToken.ID:
             self.assign()
         elif self.curr_token.token_code == EToken.PRINT:
-            self.match(EToken.PRINT)  # Staðfesta að um prentun sé að ræða
             self.print_statement()
         else:
             self.error()

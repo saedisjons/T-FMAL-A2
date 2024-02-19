@@ -14,6 +14,7 @@ class ELexer:
         #print("In get next token with current char: ", self.current_char)
         self.skip_whitespace()
         if not self.current_char:  # End of input
+            print("End of input")
             return EToken('', EToken.END)
 
         token = None

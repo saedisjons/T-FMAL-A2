@@ -11,6 +11,3 @@ if __name__ == "__main__":
     
     # Setja þáttunina í gang
     parser.parse()
-
-
-
