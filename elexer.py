@@ -1,9 +1,9 @@
 import sys
-import sys
 from etoken import EToken
 
 class ELexer:
     def __init__(self):
+        print("Inside ELexer")
         self.current_char = None
         self.read_next_char()
 
@@ -11,6 +11,7 @@ class ELexer:
         self.current_char = sys.stdin.read(1) if self.current_char != '' else ''
 
     def get_next_token(self):
+        print("In get next token with current char: ", self.current_char)
         self.skip_whitespace()
         if not self.current_char:  # End of input
             return EToken('', EToken.END)
@@ -52,6 +53,7 @@ class ELexer:
             self.read_next_char()
 
     def handle_number(self):
+        print("Handling number")
         num_str = ''
         while self.current_char and self.current_char.isdigit():
             num_str += self.current_char
@@ -59,13 +61,16 @@ class ELexer:
         return EToken(num_str, EToken.INT)
 
     def handle_identifier(self):
+        print("Handling identifier")
         id_str = ''
         while self.current_char and (self.current_char.isalpha() or self.current_char.isdigit()):
             id_str += self.current_char
             self.read_next_char()
         # Check for reserved keywords
         if id_str == 'end':
+            print("Found end")
             return EToken(id_str, EToken.END)
         elif id_str == 'print':
+            print("Found print")
             return EToken(id_str, EToken.PRINT)
         return EToken(id_str, EToken.ID)
